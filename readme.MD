@@ -1,5 +1,5 @@
 ## This package is used to call the function between worker_thread and parent using Async function
-### Using
+### Using:
 - At parent:
     ```
     import { ParentMessenger } from 'worker-messenger'
