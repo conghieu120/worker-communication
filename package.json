@@ -1,5 +1,5 @@
 {
-  "name": "worker-communication",
+  "name": "worker-messenger",
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
