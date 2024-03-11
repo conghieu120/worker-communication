@@ -7,13 +7,13 @@
     const messenger = new ParentMessenger(worker)
 
     // Add handlers
-    messenger.messageHandler.testFunction = (argsFromWorker) => {
+    messenger.messageHandler.testFunction_1 = (argsFromWorker) => {
         //Your code handler
         return 'Result from parent'
     }
     // Call function in worker
     const timeout = 5000
-    const results = await parent.callWorker('testFunction', 'args', timeout)
+    const results = await messenger.callWorker('testFunction_2', 'args', timeout)
     console.log({results});
     ```
 - At worker:
@@ -21,10 +21,12 @@
     import { WorkerMessenger } from 'worker-messenger'
     import { parentPort } from 'worker_threads'
 
-    const timeout = 5000
-    messenger.messageHandler.testFunction = (argsFromParent) => {
+    messenger.messageHandler.testFunction_2 = (argsFromParent) => {
+        //Your code handler
         return 'Result from worker'
     }
-    const result = await messenger.callParent('testFunction', 'args', timeout)
+    // Call function in parent
+    const timeout = 5000
+    const result = await messenger.callParent('testFunction_1', 'args', timeout)
     console.log({result});
     ```
