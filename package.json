@@ -1,13 +1,13 @@
 {
   "name": "worker-messenger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This package is used to call the function between worker_thread and parent using Async function",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib"
   ],
-  "prepare" : "npm run build",
+  "prepare": "npm run build",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
