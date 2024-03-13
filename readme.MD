@@ -2,9 +2,12 @@
 ### Using:
 - At parent:
     ```
+    import { Worker } from 'worker_threads'
     import { ParentMessenger } from 'worker-messenger'
-    const worker = new Worker('Path to your worker')
+
+    const worker = new Worker('Path/to/your/worker')
     const messenger = new ParentMessenger(worker)
+    const timeout = 5000
 
     // Add handlers
     messenger.messageHandler.testFunction_1 = (argsFromWorker) => {
@@ -13,7 +16,6 @@
     }
     // Call function in worker
     const test = async () => {
-        const timeout = 5000
         const results = await messenger.callWorker('testFunction_2', 'args', timeout)
         console.log({results});
     }
@@ -22,15 +24,17 @@
 - At worker:
     ```
     import { WorkerMessenger } from 'worker-messenger'
-    const messenger = new WorkerMessenger()
 
+    const messenger = new WorkerMessenger()
+    const timeout = 5000
+
+    // Add handlers
     messenger.messageHandler.testFunction_2 = (argsFromParent) => {
         //Your code handler
         return 'Result from worker'
     }
     // Call function in parent
     const test = async () => {
-        const timeout = 5000
         const result = await messenger.callParent('testFunction_1', 'args', timeout)
         console.log({result});
     }
