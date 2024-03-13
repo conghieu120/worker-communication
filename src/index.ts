@@ -3,6 +3,10 @@ import { Worker, parentPort } from 'worker_threads'
 
 const SUCCESS = 'success'
 const ERROR = 'error'
+const WORKER_RESULT = 'result-from-worker'
+const WORKER_CALL_PARENT = 'worker-call-parent'
+const PARENT_RESULT = 'result-from-parent'
+const PARENT_CALL_WORKER = 'parent-call-worker'
 
 export class ParentMessenger {
     #worker: Worker
@@ -24,7 +28,7 @@ export class ParentMessenger {
             }, timeout)
             this.#promise[uuid] = { resolve, reject }
             this.#worker?.postMessage({
-                action: 'parent-call-worker',
+                action: PARENT_CALL_WORKER,
                 uuid: uuid,
                 name,
                 data: args
@@ -33,7 +37,7 @@ export class ParentMessenger {
     }
     #initClass() {
         this.#worker?.on('message', async ({ action, uuid, result, type, name, data }: any) => {
-            if (action === 'result-from-worker') {
+            if (action === WORKER_RESULT) {
                 const promise = this.#promise[uuid]
                 if (type === SUCCESS && promise?.resolve) {
                     promise.resolve(result)
@@ -42,17 +46,17 @@ export class ParentMessenger {
                     promise.reject(result)
                     return delete this.#promise[uuid]
                 }
-            } else if (action === 'worker-call-parent') {
+            } else if (action === WORKER_CALL_PARENT) {
                 const fncHandle = this.messageHandler[name]
                 if (fncHandle) {
                     try {
                         const result = await fncHandle(data)
-                        this.#worker?.postMessage({ action: 'result-from-parent', uuid, result, name, type: 'success' })
+                        this.#worker?.postMessage({ action: PARENT_RESULT, uuid, result, name, type: SUCCESS })
                     } catch (error) {
-                        this.#worker?.postMessage({ action: 'result-from-parent', uuid, result: error, name, type: 'error' })
+                        this.#worker?.postMessage({ action: PARENT_RESULT, uuid, result: error, name, type: ERROR })
                     }
                 } else {
-                    this.#worker?.postMessage({ action: 'result-from-parent', uuid, result: 'No handler', name, type: 'error' })
+                    this.#worker?.postMessage({ action: PARENT_RESULT, uuid, result: 'No handler', name, type: ERROR })
                 }
             }
         })
@@ -68,19 +72,19 @@ export class WorkerMessenger {
     }
     #initClass () {
         this.#parent?.on('message', async ({ action, uuid, result, type, name, data }: any) => {
-            if (action === 'parent-call-worker') {
+            if (action === PARENT_CALL_WORKER) {
                 const fncHandle = this.messageHandler[name]
                 if (fncHandle) {
                     try {
                         const result = await fncHandle(data)
-                        this.#parent?.postMessage({ action: 'result-from-worker', uuid, result, name, type: 'success' })
+                        this.#parent?.postMessage({ action: WORKER_RESULT, uuid, result, name, type: SUCCESS })
                     } catch (error) {
-                        this.#parent?.postMessage({ action: 'result-from-worker', uuid, result: error, name, type: 'error' })
+                        this.#parent?.postMessage({ action: WORKER_RESULT, uuid, result: error, name, type: ERROR })
                     }
                 } else {
-                    this.#parent?.postMessage({ action: 'result-from-worker', uuid, result: "No handler", name, type: 'error' })
+                    this.#parent?.postMessage({ action: WORKER_RESULT, uuid, result: "No handler", name, type: ERROR })
                 }
-            } else if (action === 'result-from-parent') {
+            } else if (action === PARENT_RESULT) {
                 const promise = this.#promise[uuid]
                 if (type === SUCCESS && promise?.resolve) {
                     promise.resolve(result)
@@ -104,7 +108,7 @@ export class WorkerMessenger {
             }, timeout)
             this.#promise[uuid] = { resolve, reject }
             this.#parent?.postMessage({
-                action: 'worker-call-parent',
+                action: WORKER_CALL_PARENT,
                 uuid: uuid,
                 name,
                 data: args
