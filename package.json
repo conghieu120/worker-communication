@@ -1,6 +1,6 @@
 {
   "name": "worker-messenger",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "This package is used to call the function between worker_thread and parent using Async function",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
