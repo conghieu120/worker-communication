@@ -19,8 +19,7 @@
 - At worker:
     ```
     import { WorkerMessenger } from 'worker-messenger'
-    import { parentPort } from 'worker_threads'
-    const messenger = new WorkerMessenger(parentPort)
+    const messenger = new WorkerMessenger()
 
     messenger.messageHandler.testFunction_2 = (argsFromParent) => {
         //Your code handler

@@ -56,19 +56,14 @@ export class ParentMessenger {
                 }
             }
         })
-        this.#worker?.on('message', async (args) => {
-            
-        })
     }
 }
 
 export class WorkerMessenger {
-    #parent: typeof parentPort
+    #parent: typeof parentPort = parentPort
     #promise: any = {}
     messageHandler: any = {}
-    constructor(parent: typeof parentPort) {
-        parent
-        this.#parent = parent
+    constructor() {
         this.#initClass()
     }
     #initClass () {

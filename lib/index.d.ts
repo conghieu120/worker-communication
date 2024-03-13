@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { Worker, parentPort } from 'worker_threads';
+import { Worker } from 'worker_threads';
 export declare class ParentMessenger {
     #private;
     messageHandler: any;
@@ -9,6 +9,6 @@ export declare class ParentMessenger {
 export declare class WorkerMessenger {
     #private;
     messageHandler: any;
-    constructor(parent: typeof parentPort);
+    constructor();
     callParent(name: string, args: any, timeout?: number): Promise<unknown>;
 }
