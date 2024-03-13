@@ -12,9 +12,12 @@
         return 'Result from parent'
     }
     // Call function in worker
-    const timeout = 5000
-    const results = await messenger.callWorker('testFunction_2', 'args', timeout)
-    console.log({results});
+    const test = async () => {
+        const timeout = 5000
+        const results = await messenger.callWorker('testFunction_2', 'args', timeout)
+        console.log({results});
+    }
+    test()
     ```
 - At worker:
     ```
@@ -26,7 +29,10 @@
         return 'Result from worker'
     }
     // Call function in parent
-    const timeout = 5000
-    const result = await messenger.callParent('testFunction_1', 'args', timeout)
-    console.log({result});
+    const test = async () => {
+        const timeout = 5000
+        const result = await messenger.callParent('testFunction_1', 'args', timeout)
+        console.log({result});
+    }
+    test()
     ```
