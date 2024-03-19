@@ -1,5 +1,5 @@
 import { v4 as uuidV4 } from 'uuid'
-import { Worker, parentPort } from 'worker_threads'
+import { Worker, parentPort, isMainThread } from 'worker_threads'
 
 const SUCCESS = 'success'
 const ERROR = 'error'
@@ -36,6 +36,9 @@ export class ParentMessenger {
         })
     }
     #initClass() {
+        if (!isMainThread) {
+            throw new Error("ParentMessenger is not running on the main thread! Do you want to use WorkerMessenger?")
+        }
         this.#worker?.on('message', async ({ action, uuid, result, type, name, data }: any) => {
             if (action === WORKER_RESULT) {
                 const promise = this.#promise[uuid]
@@ -71,6 +74,9 @@ export class WorkerMessenger {
         this.#initClass()
     }
     #initClass () {
+        if (isMainThread) {
+            throw new Error("WorkerMessenger is not running on the main thread! Do you want to use ParentMessenger?")
+        }
         this.#parent?.on('message', async ({ action, uuid, result, type, name, data }: any) => {
             if (action === PARENT_CALL_WORKER) {
                 const fncHandle = this.messageHandler[name]
